@@ -18,9 +18,9 @@ export default defineEventHandler(async (event) => {
     const ext = path.extname(filename)
     const nameWithoutExt = path.basename(filename, ext)
 
-    // ✅ ลบ prefix "<step>_" และ suffix "_MMDDYYYY_HHMMSS"
-    const prefixPattern = new RegExp(`^${step.replace('.', '\\.')}_`)  // escape . เช่น 4.2
-    const nameWithoutStep = nameWithoutExt.replace(prefixPattern, '')
+    // ✅ Escape dot ใน step (เช่น "4.2") และตัด timestamp
+    const prefixRegex = new RegExp(`^${step.replace(/\./g, '\\.')}_`)
+    const nameWithoutStep = nameWithoutExt.replace(prefixRegex, '')
     const nameWithoutTimestamp = nameWithoutStep.replace(/_\d{8}_\d{6}$/, '')
 
     const downloadName = `${nameWithoutTimestamp}${ext}`
