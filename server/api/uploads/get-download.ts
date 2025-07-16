@@ -18,11 +18,12 @@ export default defineEventHandler(async (event) => {
     const ext = path.extname(filename)
     const nameWithoutExt = path.basename(filename, ext)
 
-    // ✅ ลบ prefix step_ และ suffix _MMDDYYYY_HHMMSS ออก
-    const nameWithoutStep = nameWithoutExt.replace(new RegExp(`^${step}_`), '')
-    const originalName = nameWithoutStep.replace(/_\d{8}_\d{6}$/, '')
+    // ✅ ลบ prefix "<step>_" และ suffix "_MMDDYYYY_HHMMSS"
+    const prefixPattern = new RegExp(`^${step.replace('.', '\\.')}_`)  // escape . เช่น 4.2
+    const nameWithoutStep = nameWithoutExt.replace(prefixPattern, '')
+    const nameWithoutTimestamp = nameWithoutStep.replace(/_\d{8}_\d{6}$/, '')
 
-    const downloadName = `${originalName}${ext}`
+    const downloadName = `${nameWithoutTimestamp}${ext}`
 
     const mimeMap: Record<string, string> = {
       '.pdf': 'application/pdf',
