@@ -40,14 +40,13 @@
           <td style="height: 60px" class="text-left">{{ row.operator }}</td>
           <td style="height: 60px" class="text-left">{{ row.detail }}</td>
           <td style="height: 60px" class="text-left">
-  <a
-    v-if="row.document"
-    :href="`/api/uploads/get-download?step=${encodeURIComponent(row.no)}&file=${encodeURIComponent(row.document)}`"
-    target="_blank"
-    class="text-primary"
-  >
-    ดาวน์โหลด
-  </a>
+  <q-btn
+  v-if="row.document"
+  dense flat color="primary"
+  label="ดาวน์โหลด"
+  @click="downloadFile(row.no, row.document)"
+/>
+
   <span v-else>-</span>
 </td>
 
@@ -288,7 +287,6 @@ const step = ref(10);
           date: '2024-09-18T12:15:00',
           comment:''
         }
-        
       
 ]);
 
@@ -359,6 +357,8 @@ const handleFileChange = async (event: Event, stepNo: number | string) => {
   } finally {
     input.value = ''
   }
+
+  
 }
 
 function timelineClass(row: TimelineItem, index: number) {
@@ -388,6 +388,28 @@ function timelineClass(row: TimelineItem, index: number) {
   }
   return response;
 }
+
+const downloadFile = async (step: string | number, filename: string) => {
+  try {
+    const res = await fetch(`/api/uploads/get-download?step=${encodeURIComponent(step)}&file=${encodeURIComponent(filename)}`)
+    if (!res.ok) throw new Error('ไม่พบไฟล์')
+
+    const blob = await res.blob()
+    const url = window.URL.createObjectURL(blob)
+
+    const link = document.createElement('a')
+    const ext = filename.substring(filename.lastIndexOf('.'))
+    const realName = filename.replace(/^.+?_(.+?)_\d{8}_\d{6}\.[^.]+$/, '$1' + ext)
+
+    link.href = url
+    link.download = realName
+    link.click()
+    window.URL.revokeObjectURL(url)
+  } catch (e) {
+    $q.notify({ type: 'negative', message: 'ไม่พบไฟล์สำหรับดาวน์โหลด' })
+  }
+}
+
 </script>
 
 <style scoped>

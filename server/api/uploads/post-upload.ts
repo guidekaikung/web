@@ -36,7 +36,7 @@ export default defineEventHandler(async (event) => {
       const timestamp = `${mmddyyyy}_${time}`
 
       // ✅ รวมชื่อใหม่: 4.2_ใบเสร็จเงิน_07162025_150512.pdf
-      const newFilename = `${step}_${namePart}_${timestamp}${ext}`
+      const newFilename = `${step}_${mmddyyyy}${ext}`
 
       const stepDir = path.join(process.cwd(), 'server', 'api', 'uploads', 'file', step)
       if (!fs.existsSync(stepDir)) {
